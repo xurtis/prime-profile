@@ -107,13 +107,13 @@ double percentProgress (uint32_t step, uint32_t total) {
 }
 
 uint32_t intSqrt (uint64_t num) {
-    uint64_t root = 0;
+    uint64_t root = (uint32_t) ~0;
     uint32_t mask;
 
     for (mask = 1 << 31; mask > 0; mask >>= 1) {
-        root |= mask;
-        if (root * root > num) {
-            root &= ~mask;
+        root &= ~mask;
+        if (root * root < num) {
+            root |= mask;
         }
     }
 
@@ -130,7 +130,7 @@ void countPrimes(Iterator iter) {
         uint32_t root = intSqrt(i);
         resetIterator(iter);
 
-        while (prime && !isEndIterator(iter) && j < root) {
+        while (prime && !isEndIterator(iter) && j <= root) {
             j = nextIterator(iter);
             if (!(i % j)) {
                 prime = FALSE;
@@ -140,6 +140,12 @@ void countPrimes(Iterator iter) {
         if (prime) {
             pushIterator(iter, i);
             primes++;
+            if (primes < 100) {
+                printf("%d, ", i);
+            } else if (primes == 100) {
+                printf("\n");
+            }
+
             if (!(primes % 50000)) {
                 printf("\e[GFound %12d at %7.3lf%%...", 
                     primes, percentProgress(i, MAX_PRIMES)
