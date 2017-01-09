@@ -8,6 +8,7 @@
 
 #define MAX_PRIMES (1<<30)
 
+// Iterator implementation
 typedef struct _node *Node;
 typedef struct _node {
     uint32_t value;
@@ -20,6 +21,38 @@ typedef struct _iterator {
     Node end;
 } iterator_t;
 typedef iterator_t *Iterator;
+
+// Iterator interface
+Node newNode (uint32_t value);
+Iterator newIterator (void);
+void destroyIterator (Iterator iterator);
+void resetIterator (Iterator iterator);
+int isEndIterator (Iterator iterator);
+uint32_t nextIterator (Iterator iterator);
+void pushIterator (Iterator iterator, uint32_t value);
+
+// Count primes using an iterator for found primes
+void countPrimes(Iterator iter);
+
+// Calculate the ceiling of the square root of an integer
+uint32_t intSqrt (uint64_t num);
+
+// Calculate progress as a double
+double percentProgress (uint32_t step, uint32_t total);
+
+int main (void) {
+    Iterator iter = newIterator();
+
+    if (iter != NULL) {
+        countPrimes(iter);
+    } else {
+        errx(EXIT_FAILURE, "Failed to create iterator");
+    }
+
+    destroyIterator(iter);
+
+    return EXIT_SUCCESS;
+}
 
 Node newNode (uint32_t value) {
     Node node = calloc(1, sizeof(node_t));
@@ -156,18 +189,4 @@ void countPrimes(Iterator iter) {
     }
 
     printf("\e[G\e[KFound %12d primes.\n", primes);
-}
-
-int main (void) {
-    Iterator iter = newIterator();
-
-    if (iter != NULL) {
-        countPrimes(iter);
-    } else {
-        errx(EXIT_FAILURE, "Failed to create iterator");
-    }
-
-    destroyIterator(iter);
-
-    return EXIT_SUCCESS;
 }
