@@ -6,7 +6,7 @@
 #define FALSE 0
 #define TRUE  (!FALSE)
 
-#define MAX_PRIMES (1<<30)
+#define RATE 50000
 
 // Iterator implementation
 typedef struct _node *Node;
@@ -32,7 +32,7 @@ uint32_t nextIterator (Iterator iterator);
 void pushIterator (Iterator iterator, uint32_t value);
 
 // Count primes using an iterator for found primes
-void countPrimes(Iterator iter);
+void countPrimes(Iterator iter, uint32_t max);
 
 // Calculate the ceiling of the square root of an integer
 uint32_t intSqrt (uint64_t num);
@@ -40,11 +40,22 @@ uint32_t intSqrt (uint64_t num);
 // Calculate progress as a double
 double percentProgress (uint32_t step, uint32_t total);
 
-int main (void) {
+int main (int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s max_prime\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    int32_t max = atoi(argv[1]);
+
+    if (max <= 0) {
+        errx(EXIT_FAILURE, "max_prime must be a positive integer");
+    }
+    
     Iterator iter = newIterator();
 
     if (iter != NULL) {
-        countPrimes(iter);
+        countPrimes(iter, (uint32_t)max);
     } else {
         errx(EXIT_FAILURE, "Failed to create iterator");
     }
@@ -143,21 +154,21 @@ uint32_t intSqrt (uint64_t num) {
     uint64_t root = (uint32_t) ~0;
     uint32_t mask;
 
-    for (mask = 1 << 31; mask > 0; mask >>= 1) {
+    for (mask = (uint32_t)1 << 31; mask > 0; mask >>= 1) {
         root &= ~mask;
         if (root * root < num) {
             root |= mask;
         }
     }
 
-    return root;
+    return (uint32_t) root;
 }
 
-void countPrimes(Iterator iter) {
+void countPrimes(Iterator iter, uint32_t max) {
     uint32_t primes = 0;
     uint32_t i;
 
-    for (i = 2; i < MAX_PRIMES; i++) {
+    for (i = 2; i <= max; i++) {
         int prime = TRUE;
         uint32_t j = 0;
         uint32_t root = intSqrt(i);
@@ -174,19 +185,26 @@ void countPrimes(Iterator iter) {
             pushIterator(iter, i);
             primes++;
             if (primes < 100) {
-                printf("%d, ", i);
+                printf("%3d, ", i);
+                if (!(primes % 5)) {
+                    printf("\n");
+                }
             } else if (primes == 100) {
-                printf("\n");
+                printf("%d\n", i);
             }
 
-            if (!(primes % 50000)) {
-                printf("\e[GFound %12d at %7.3lf%%...", 
-                    primes, percentProgress(i, MAX_PRIMES)
+            if (!(primes % RATE)) {
+                printf("\033[GFound %12d at %7.3lf%%...", 
+                    primes, percentProgress(i, max)
                 );
                 fflush(stdout);
             }
         }
     }
 
-    printf("\e[G\e[KFound %12d primes.\n", primes);
+    if (primes < 100 && primes % 5) {
+        printf("\n");
+    }
+
+    printf("\033[G\033[KFound %12d primes.\n", primes);
 }
