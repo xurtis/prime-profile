@@ -1,7 +1,8 @@
 CC=clang
 CFLAGS=-O3
+JC=javac
 
-EVERYTHING=c-primes
+EVERYTHING=c-primes Primes.class
 
 all:	$(EVERYTHING)
 
@@ -10,3 +11,6 @@ clean:
 
 c-primes:	primes.c
 	$(CC) $(CFLAGS) -o $@ $^
+
+%.class:	%.java
+	$(JC) $^

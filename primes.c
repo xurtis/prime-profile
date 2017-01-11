@@ -150,20 +150,6 @@ double percentProgress (uint32_t step, uint32_t total) {
     return 100.0 * ((double) step / (double) total);
 }
 
-uint32_t intSqrt (uint64_t num) {
-    uint64_t root = (uint32_t) ~0;
-    uint32_t mask;
-
-    for (mask = (uint32_t)1 << 31; mask > 0; mask >>= 1) {
-        root &= ~mask;
-        if (root * root < num) {
-            root |= mask;
-        }
-    }
-
-    return (uint32_t) root;
-}
-
 void countPrimes(Iterator iter, uint32_t max) {
     uint32_t primes = 0;
     uint32_t i;
@@ -171,10 +157,9 @@ void countPrimes(Iterator iter, uint32_t max) {
     for (i = 2; i <= max; i++) {
         int prime = TRUE;
         uint32_t j = 0;
-        uint32_t root = intSqrt(i);
         resetIterator(iter);
 
-        while (prime && !isEndIterator(iter) && j <= root) {
+        while (prime && !isEndIterator(iter) && j * j <= i) {
             j = nextIterator(iter);
             if (!(i % j)) {
                 prime = FALSE;
