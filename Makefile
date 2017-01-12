@@ -9,7 +9,7 @@ EVERYTHING=c-primes Primes.class rs-primes
 all:	$(EVERYTHING)
 
 clean:
-	rm -rf $(EVERYTHING)
+	rm -rf $(EVERYTHING) primes.pyc
 
 c-primes:	primes.c
 	$(CC) $(CFLAGS) -o $@ $^
