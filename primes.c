@@ -34,9 +34,6 @@ void pushIterator (Iterator iterator, uint32_t value);
 // Count primes using an iterator for found primes
 void countPrimes(Iterator iter, uint32_t max);
 
-// Calculate the ceiling of the square root of an integer
-uint32_t intSqrt (uint64_t num);
-
 // Calculate progress as a double
 double percentProgress (uint32_t step, uint32_t total);
 
