@@ -1,6 +1,6 @@
-use std::{env, process};
 use std::io::{stdout, Write};
 use std::str::FromStr;
+use std::{env, process};
 
 const RATE: u32 = 50000;
 
@@ -30,7 +30,7 @@ fn count_primes(max: u32) {
     let mut n_primes = 0u32;
     let mut primes: Vec<u32> = Vec::new();
     let mut sout = stdout();
-    
+
     for i in 2..(max + 1) {
         let mut prime = true;
 
@@ -54,13 +54,15 @@ fn count_primes(max: u32) {
                 if (n_primes % 5) == 0 {
                     println!("");
                 }
-            } else if n_primes == 100 {
+            } else {
                 println!("{:3}", i);
             }
 
             if (n_primes % RATE) == 0 {
-                print!("\x1B[GFound {:12} at {:7.3}%...",
-                    n_primes, percent_progress(i, max)
+                print!(
+                    "\x1B[GFound {:12} at {:7.3}%...",
+                    n_primes,
+                    percent_progress(i, max)
                 );
                 sout.flush().unwrap();
             }
